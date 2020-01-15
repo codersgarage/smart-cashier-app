@@ -8,9 +8,9 @@
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="page-header">
-                                <h2 class="pageheader-title">Entries</h2>
-                                <router-link v-bind:to="newEntryPath">
-                                    <a class="btn btn-brand active">New Entry</a>
+                                <h2 class="pageheader-title">Categories</h2>
+                                <router-link v-bind:to="newCategoryPath">
+                                    <a class="btn btn-brand active">New Category</a>
                                 </router-link>
                             </div>
                         </div>
@@ -21,33 +21,29 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <div v-if="entries.length === 0" class="text-center">
+                                        <div v-if="categories.length === 0" class="text-center">
                                             <h4 class="py-1 bg-dark text-white">No data found</h4>
                                         </div>
                                         <div v-else>
                                             <table class="table table-striped table-bordered first">
                                                 <thead>
                                                 <tr>
+                                                    <th>Name</th>
                                                     <th>Amount</th>
-                                                    <th>Note</th>
-                                                    <th>Category</th>
-                                                    <th>When</th>
                                                     <th>Actions</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr v-for="e in entries" v-bind:key="e.id">
-                                                    <td>{{ e.amount }}</td>
-                                                    <td>{{ e.note }}</td>
-                                                    <td>{{ e.category_name }}</td>
-                                                    <td>{{ e.created_at }}</td>
+                                                <tr v-for="c in categories" v-bind:key="c.id">
+                                                    <td>{{ c.name }}</td>
+                                                    <td>{{ c.amount }}</td>
                                                     <td>
                                                         <div class="dd-nodrag btn-group ml-auto">
                                                             <button class="btn btn-sm btn-outline-light"
-                                                                    @click="onDiarySelected(e.name, e.id)">Update
+                                                                    @click="onDiarySelected(c.id)">Update
                                                             </button>
                                                             <button class="btn btn-sm btn-outline-light"
-                                                                    @click="deleteEntry(e.id)">Delete
+                                                                    @click="deleteCategory(c.id)">Delete
                                                             </button>
                                                         </div>
                                                     </td>
@@ -75,7 +71,6 @@
                         </BPagination>
                     </div>
                 </div>
-
                 <Footer/>
             </div>
         </div>
@@ -83,51 +78,51 @@
 </template>
 
 <script>
+    import axios from "axios";
     import Header from "../Header";
     import SideBar from "../SideBar";
     import Footer from "../Footer";
     import Settings from "../../common/settings";
     import SessionStore from "../../common/session_store";
-    import axios from "axios";
 
     export default {
-        name: "ListEntries",
-        components: {Footer, SideBar, Header},
+        name: "ListCategories",
         data() {
             return {
                 selectedDiaryId: String,
-                newEntryPath: String,
-                entries: []
+                newCategoryPath: String,
+                categories: []
             }
         },
+        components: {Footer, SideBar, Header},
         mounted() {
             this.selectedDiaryId = this.$route.params.diary_id;
-            this.newEntryPath = "/diaries/" + this.selectedDiaryId + "/entries/new";
-            this.listEntries();
+            this.newCategoryPath = "/diaries/" + this.selectedDiaryId + "/categories/new";
+            this.listCategories();
         },
         methods: {
-            listEntries: function () {
-                axios.get(Settings.GetApiUrl() + "/diaries/" + this.selectedDiaryId + "/entries?page=" + this.currentPage
+            listCategories: function () {
+                axios.get(Settings.GetApiUrl() + "/diaries/" + this.selectedDiaryId + "/categories?page=" + this.currentPage
                     + "&limit" + this.perPage, {
                     headers: {
                         "Authorization": "Bearer " + SessionStore.GetAccessToken(),
                     }
                 }).then(resp => {
                     console.log(resp);
-                    this.entries = resp.data.data;
+                    this.categories = resp.data.data;
                 }).catch(err => {
                     console.log(err);
                 })
             },
-            deleteEntry: function (id) {
-                axios.delete(Settings.GetApiUrl() + "/diaries/" + this.selectedDiaryId + "/entries/" + id, {
+            deleteCategory: function (id) {
+                axios.delete(Settings.GetApiUrl() + "/diaries/" + this.selectedDiaryId + "/categories/" + id, {
                     headers: {
                         "Authorization": "Bearer " + SessionStore.GetAccessToken(),
                     }
                 }).then(resp => {
                     console.log(resp);
-                    alert("Entry deleted");
-                    this.listEntries();
+                    alert("Category deleted");
+                    this.listCategories();
                 }).catch(err => {
                     console.log(err);
                 })

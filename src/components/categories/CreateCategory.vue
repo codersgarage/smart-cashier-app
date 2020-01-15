@@ -8,7 +8,7 @@
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="page-header">
-                                <h2 class="pageheader-title">New Diary</h2>
+                                <h2 class="pageheader-title">New Category</h2>
                             </div>
                         </div>
                     </div>
@@ -25,17 +25,6 @@
                                                 <input id="inputName" v-model="name" type="text"
                                                        placeholder="Name"
                                                        class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label
-                                                    class="col-3 col-lg-2 col-form-label text-right">Type</label>
-                                            <div class="col-9 col-lg-10">
-                                                <select class="form-control form-control-sm"
-                                                        v-on:change="onTypeSelected">
-                                                    <option value="credit">Credit</option>
-                                                    <option value="debit">Debit</option>
-                                                </select>
                                             </div>
                                         </div>
                                         <div class="row pt-2 pt-sm-5 mt-1">
@@ -66,18 +55,21 @@
     import SideBar from "../SideBar";
     import Footer from "../Footer";
     import axios from "axios";
-    import Settings from "../../common/settings";
     import SessionStore from "../../common/session_store";
+    import Settings from "../../common/settings";
 
     export default {
-        name: "CreateDiary",
+        name: "CreateCategory",
         components: {Footer, SideBar, Header},
         data() {
             return {
+                selectedDiaryId: String,
                 name: "",
-                type: "credit",
                 btnDisabled: false
             }
+        },
+        mounted() {
+            this.selectedDiaryId = this.$route.params.diary_id;
         },
         methods: {
             onTypeSelected(e) {
@@ -87,19 +79,18 @@
                 this.btnDisabled = true;
 
                 let pld = {
-                    name: this.name,
-                    type: this.type
+                    name: this.name
                 };
 
                 console.log(pld);
 
-                axios.post(Settings.GetApiUrl() + "/diaries", pld, {
+                axios.post(Settings.GetApiUrl() + "/diaries/" + this.selectedDiaryId + "/categories", pld, {
                     headers: {
                         "Authorization": "Bearer " + SessionStore.GetAccessToken(),
                     }
                 }).then(resp => {
                     console.log(resp);
-                    this.$router.push('/diaries');
+                    this.$router.push('/diaries/' + this.selectedDiaryId + "/categories");
                 }).catch(err => {
                     console.log(err);
                 });

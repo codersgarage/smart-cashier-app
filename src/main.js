@@ -6,6 +6,9 @@ import ListDiaries from "./components/diary/ListDiaries";
 import CreateDiary from "./components/diary/CreateDiary";
 import ListEntries from "./components/entries/ListEntries";
 import CreateEntry from "./components/entries/CreateEntry";
+import Login from "./components/Login";
+import ListCategories from "./components/categories/ListCategories";
+import CreateCategory from "./components/categories/CreateCategory";
 
 Vue.config.productionTip = false;
 
@@ -15,6 +18,10 @@ const routes = [
     {
         path: '/',
         component: Index
+    },
+    {
+        path: '/login',
+        component: Login
     },
     {
         path: '/diaries',
@@ -31,6 +38,14 @@ const routes = [
     {
         path: '/diaries/:diary_id/entries/new',
         component: CreateEntry
+    },
+    {
+        path: '/diaries/:diary_id/categories',
+        component: ListCategories
+    },
+    {
+        path: '/diaries/:diary_id/categories/new',
+        component: CreateCategory
     }
 ];
 

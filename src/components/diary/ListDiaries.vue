@@ -44,7 +44,7 @@
                                                                     @click="onListEntriesSelected(d.id)">Entries
                                                             </button>
                                                             <button class="btn btn-sm btn-outline-light"
-                                                                    @click="onDiarySelected(d.name, d.id)">Categories
+                                                                    @click="onListCategoriesSelected(d.id)">Categories
                                                             </button>
                                                         </div>
                                                     </td>
@@ -54,7 +54,7 @@
                                                                     @click="onDiarySelected(d.name, d.id)">Update
                                                             </button>
                                                             <button class="btn btn-sm btn-outline-light"
-                                                                    @click="onDiarySelected(d.name, d.id)">Delete
+                                                                    @click="deleteDiary(d.id)">Delete
                                                             </button>
                                                         </div>
                                                     </td>
@@ -123,7 +123,23 @@
             },
             onListEntriesSelected: function (id) {
                 this.$router.push('/diaries/' + id + "/entries");
-            }
+            },
+            onListCategoriesSelected: function (id) {
+                this.$router.push('/diaries/' + id + "/categories");
+            },
+            deleteDiary: function (id) {
+                axios.delete(Settings.GetApiUrl() + "/diaries/" + id, {
+                    headers: {
+                        "Authorization": "Bearer " + SessionStore.GetAccessToken(),
+                    }
+                }).then(resp => {
+                    console.log(resp);
+                    alert("Diary deleted");
+                    this.listDiaries();
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
         }
     }
 </script>
