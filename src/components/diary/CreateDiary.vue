@@ -8,7 +8,7 @@
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="page-header">
-                                <h2 class="pageheader-title">Update Category</h2>
+                                <h2 class="pageheader-title">Add Category</h2>
                             </div>
                         </div>
                     </div>
@@ -40,11 +40,11 @@
                                             </label>
                                             <div class="col-9 col-lg-10">
                                                 <label class="custom-control custom-radio custom-control-inline">
-                                                    <select v-model="isPublished"
-                                                            class="form-control form-control-sm"
-                                                            name="is_published">
-                                                        <option v-bind:value="true">Yes</option>
-                                                        <option v-bind:value="false">No</option>
+                                                    <select class="form-control form-control-sm"
+                                                            v-on:change="onCheckBoxHandle" name="is_published">
+                                                        <option v-bind:key="'yes'" v-bind:value="'yes'">Yes</option>
+                                                        <option v-bind:key="'no'" v-bind:value="'no'" selected>No
+                                                        </option>
                                                     </select>
                                                 </label>
                                             </div>
@@ -66,7 +66,7 @@
                                                 <p class="text-right">
                                                     <button type="submit" class="btn btn-space btn-primary"
                                                             :disabled="btnDisabled"
-                                                            v-on:click="updateCategory">Update
+                                                            v-on:click="createNewCategory">Add
                                                     </button>
                                                     <button class="btn btn-space btn-secondary" v-on:click="onCancel">
                                                         Cancel
@@ -87,101 +87,7 @@
 </template>
 
 <script>
-    import axios from "axios";
-    import VueSimplemde from "vue-simplemde";
-    import Footer from "@/components/Footer";
-    import SideBar from "@/components/SideBar";
-    import Header from "@/components/Header";
-    import MediaService from "@/common/media_service";
-    import Settings from "@/common/settings";
-    import SessionStore from "@/common/session_store";
-
     export default {
-        name: "CategoryUpdate",
-        components: {Header, SideBar, Footer, VueSimplemde},
-        data() {
-            return {
-                cat_id: this.$route.params.id,
-                name: "",
-                description: "",
-                isPublished: false,
-                image: "",
-                btnDisabled: false,
-            }
-        },
-        mounted() {
-            this.getCategory(this.cat_id);
-        },
-        methods: {
-            getCategory: function(id) {
-                axios.get(Settings.GetApiUrl() + '/categories/' + id, {
-                    headers: {
-                        "Authorization": "Bearer " + SessionStore.GetAccessToken(),
-                    }
-                }).then(resp => {
-                    let instance = resp.data.data;
-
-                    this.name = instance.name;
-                    this.description = instance.description;
-                    this.isPublished = instance.is_published;
-                    this.image = instance.image;
-                })
-            },
-            onImageSelected: function (e) {
-                let files = e.target.files || e.dataTransfer.files;
-                if (files.length > 0) {
-                    this.btnDisabled = true;
-
-                    MediaService.uploadFile(files[0], "categories").then(resp => {
-                        let data = resp.data;
-                        this.image = data.path;
-                        this.btnDisabled = false;
-                    }).catch(err => {
-                        console.log(err);
-                        let resp = err.response;
-                        console.log(resp);
-                    });
-                }
-                console.log(e.target.files || e.dataTransfer.files);
-            },
-            getFullImagePath: function (subPath) {
-                return Settings.GetMediaUrl() + subPath;
-            },
-            updateCategory: function () {
-                let pld = {};
-                pld.name = this.name;
-                pld.description = this.description;
-                pld.is_published = this.isPublished;
-                pld.image = this.image;
-
-                //console.log(pld);
-
-                axios.patch(Settings.GetApiUrl() + "/categories/" + this.cat_id, pld, {
-                    headers: {
-                        "Authorization": "Bearer " + SessionStore.GetAccessToken(),
-                    }
-                }).then(resp => {
-                    console.log(resp);
-                    this.$router.push('/stores/categories');
-                }).catch(err => {
-                    console.log(err);
-
-                    if (SessionStore.isUnauthorized(err)) {
-                        this.$router.push("/login");
-                        return
-                    }
-
-                    let resp = err.response;
-                    alert(resp.title);
-                })
-            },
-            onCancel: function () {
-                this.$router.push('/stores/categories');
-            }
-        }
+        name: "CreateDiary"
     }
 </script>
-
-<style scoped>
-
-</style>

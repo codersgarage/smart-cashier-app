@@ -10,18 +10,6 @@ class SessionStore {
         return localStorage.getItem('access_token');
     }
 
-    static IsAdmin() {
-        return localStorage.getItem("permission") === "admin"
-    }
-
-    static IsManager() {
-        return localStorage.getItem("permission") === "manager"
-    }
-
-    static IsUser() {
-        return localStorage.getItem("permission") === "user"
-    }
-
     static IsLoggedIn() {
         let token = localStorage.getItem('access_token');
         let expireOn = localStorage.getItem('expire_on');
@@ -41,9 +29,12 @@ class SessionStore {
         return resp.status === 401
     }
 
-    static isStoreNotFound(err) {
-        let resp = err.response;
-        return resp.status === 404
+    static SetDefaultDiaryId(id) {
+        localStorage.setItem("default_diary", id)
+    }
+
+    static GetDefaultDiaryId() {
+        localStorage.getItem("default_diary")
     }
 }
 
